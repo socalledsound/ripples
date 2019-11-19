@@ -4,7 +4,17 @@
   let cols, rows,
     current = [],
     previous = [],
-    damping = 0.95;
+    damping = 0.99;
+
+setTimeout(addRipple, 3000);
+
+function addRipple(){
+
+  current[floor(random(width))][floor(random(height))] = 255;
+  damping = random(0.9,0.99);
+  let interval = random(100, 1000);
+  setTimeout(addRipple, interval);
+}
 
 //introduce one white pixel to this black screen
   function mouseDragged() {
@@ -45,16 +55,22 @@
    //iterate through the pixel arrays
     for (let i = 1; i < cols - 1; i++) {
       for (let j = 1; j < rows - 1; j++) {
+  
+        let left = i -1;
+        let right = i + 1;
+         let above = j - 1;
+        let below = j + 1;
+        
         current[i][j] =
-          (previous[i - 1][j] + 
-           previous[i + 1][j] +
-            previous[i][j - 1] + 
-           previous[i][j + 1] +
-            previous[i - 1][j - 1] + 
-           previous[i - 1][j + 1] +
-            previous[i + 1][j - 1] + 
-            previous[i + 1][j + 1]
-          ) / 4 - current[i][j];
+          (previous[left][j] + 
+           previous[right][j] +
+            previous[i][above] + 
+           previous[i][below] +
+            previous[left][above] + 
+           previous[left][below] +
+            previous[right][above] + 
+            previous[right][below]
+          ) / 4 - (current[i][j]);
         
         //add some damping to the ripples so they don't explode
         current[i][j] = current[i][j] * damping
@@ -66,18 +82,31 @@
         let n = current[i][j];
         
         //you could try adding some color here
-//         let r = 0.5-cos(n*17.0);
-//         let g = 0.5-cos(n*13.0);
-//         let b = 0.5-cos(n*23.0);
-        
+ 
+         let r, g, b;
+       let coin = random(1000); 
+        if(coin > 800){
+          
+        r = 0.5-cos(n*17.0);
+         g = 0.5-cos(n*13.0);
+         b = 0.5-cos(n*23.0);
+        } else {
+          r = n;
+          g = n;
+          b = n;
+        }
+   
+       
+
+
 //         if(i === 1 && j ==1){
 //         console.log(r);
 //         }
         
         //this should look pretty familiar
-         pixels[index + 0] = n * 255;
-         pixels[index + 1] = n * 255;
-         pixels[index + 2] = n * 255;
+         pixels[index + 0] = r*255;
+         pixels[index + 1] = g*255;
+         pixels[index + 2] = b*255;
         pixels[index + 3] = 255;
     
       }
